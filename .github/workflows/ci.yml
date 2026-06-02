@@ -54,30 +54,7 @@ jobs:
     - name: Run tests with pytest
       env:
         PYTHONPATH: .
-      run: |
-        set -o pipefail
-        pytest tests/ -v --tb=long 2>&1 | tee test-output.txt
-        echo "---DEPENDENCIES---" >> test-output.txt
-        pip freeze | grep -E "pandas|numpy|scikit|kmodes|mlxtend|matplotlib|seaborn|pytest" >> test-output.txt
-
-    - name: Show test failures
-      if: failure()
-      run: |
-        echo '## Pytest Output (first 80 lines)' >> $GITHUB_STEP_SUMMARY
-        echo '```' >> $GITHUB_STEP_SUMMARY
-        head -80 test-output.txt >> $GITHUB_STEP_SUMMARY
-        echo '```' >> $GITHUB_STEP_SUMMARY
-        echo '## Pytest Output (last 80 lines)' >> $GITHUB_STEP_SUMMARY
-        echo '```' >> $GITHUB_STEP_SUMMARY
-        tail -80 test-output.txt >> $GITHUB_STEP_SUMMARY
-        echo '```' >> $GITHUB_STEP_SUMMARY
-
-    - name: Upload test output
-      if: 'always()'
-      uses: actions/upload-artifact@v4
-      with:
-        name: test-output-py${{ matrix.python-version }}
-        path: test-output.txt
+      run: pytest tests/ -v --tb=long --cov=src --cov-report=html
 
   performance-test:
     runs-on: ubuntu-latest
