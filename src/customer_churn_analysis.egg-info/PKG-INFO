@@ -2,7 +2,7 @@ Metadata-Version: 2.4
 Name: customer-churn-analysis
 Version: 1.0.0
 Summary: 高性能客户流失分析系统，支持关联规则挖掘和聚类分析
-Author-email: Claude Code <noreply@anthropic.com>
+Author-email: WG <wgaaa98@gmail.com>
 License: MIT
 Project-URL: Homepage, https://github.com/yourusername/customer-churn-analysis
 Project-URL: Repository, https://github.com/yourusername/customer-churn-analysis.git

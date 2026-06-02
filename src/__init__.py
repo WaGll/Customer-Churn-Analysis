@@ -5,5 +5,5 @@
 """
 
 __version__ = "1.0.0"
-__author__ = "Claude Code"
-__email__ = "noreply@anthropic.com"
+__author__ = "WG"
+__email__ = "wgaaa98@gmail.com"

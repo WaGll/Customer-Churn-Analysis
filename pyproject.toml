@@ -10,7 +10,7 @@ readme = "README.md"
 requires-python = ">=3.9"
 license = {text = "MIT"}
 authors = [
-    {name = "Claude Code", email = "noreply@anthropic.com"},
+    {name = "WG", email = "wgaaa98@gmail.com"},
 ]
 keywords = ["churn", "analysis", "clustering", "association-rules", "machine-learning"]
 classifiers = [
