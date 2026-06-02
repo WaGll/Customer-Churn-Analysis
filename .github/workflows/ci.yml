@@ -93,6 +93,7 @@ jobs:
     - name: Test Docker image run
       run: |
         mkdir -p /tmp/churn-data
+        chmod 777 /tmp/churn-data
         docker run --rm -v /tmp/churn-data:/app/data -v $PWD/scripts:/tmp/scripts \
           customer-churn-analysis:latest python /tmp/scripts/generate_test_data.py 100 /app/data/customer_churn_data.xlsx
         docker run --rm -v /tmp/churn-data:/app/data customer-churn-analysis:latest \
