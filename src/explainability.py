@@ -7,6 +7,7 @@
 - SHAP 摘要图、特征重要性图、依赖图
 """
 
+import os
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
