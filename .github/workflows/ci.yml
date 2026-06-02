@@ -10,6 +10,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         python-version: ["3.11", "3.12"]
 
@@ -36,11 +37,25 @@ jobs:
     - name: Ensure output directories
       run: mkdir -p output/results output/visualizations output/models
 
+    - name: Verify module imports
+      env:
+        PYTHONPATH: .
+      run: |
+        python -c "
+        from src.data_loader import DataLoader; print('data_loader OK')
+        from src.feature_engineering import FeatureEngineer; print('feature_engineering OK')
+        from src.association_rules import AssociationRuleMiner; print('association_rules OK')
+        from src.clustering import ClusterAnalyzer; print('clustering OK')
+        from src.prediction import ChurnPredictor; print('prediction OK')
+        from src.api import app; print('api OK')
+        print('All imports successful')
+        "
+
     - name: Run tests with pytest
       env:
         PYTHONPATH: .
       run: |
-        pytest tests/ -v --cov=src --cov-report=xml
+        pytest tests/ -v --tb=long --cov=src --cov-report=xml 2>&1
 
     - name: Upload coverage reports
       uses: codecov/codecov-action@v4
