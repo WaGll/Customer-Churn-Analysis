@@ -565,7 +565,7 @@ class ClusterAnalyzer:
 
             # 分析每个特征的统计信息
             for col in data.columns:
-                if data[col].dtype in ['object', 'category']:
+                if not pd.api.types.is_numeric_dtype(data[col]):
                     # 分类变量
                     value_counts = cluster_data[col].value_counts()
                     cluster_characteristics[f'cluster_{cluster_id}']['features'][col] = {

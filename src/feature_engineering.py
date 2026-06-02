@@ -69,7 +69,7 @@ class FeatureEngineer:
         # 处理缺失值
         for col in df_cleaned.columns:
             if df_cleaned[col].isnull().sum() > 0:
-                if df_cleaned[col].dtype in ['object', 'category']:
+                if not pd.api.types.is_numeric_dtype(df_cleaned[col]):
                     df_cleaned[col] = df_cleaned[col].fillna(df_cleaned[col].mode()[0])
                 else:
                     df_cleaned[col] = df_cleaned[col].fillna(df_cleaned[col].median())
@@ -272,7 +272,7 @@ class FeatureEngineer:
 
             # 对每个批次进行特征处理
             for col in batch_features:
-                if df[col].dtype in ['object', 'category']:
+                if not pd.api.types.is_numeric_dtype(df[col]):
                     # 分类变量处理
                     processed_col = pd.get_dummies(df[col], prefix=col)
                 else:
