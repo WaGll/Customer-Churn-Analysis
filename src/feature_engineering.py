@@ -91,7 +91,7 @@ class FeatureEngineer:
         logger.info("创建全热编码数据集...")
 
         # 识别分类列
-        categorical_cols = df.select_dtypes(include=['object', 'category']).columns.tolist()
+        categorical_cols = df.select_dtypes(include=['object', 'category', 'string']).columns.tolist()
         numeric_cols = df.select_dtypes(include=[np.number]).columns.tolist()
 
         # 分离数据
@@ -155,7 +155,7 @@ class FeatureEngineer:
         df = df.copy()
 
         # 识别列类型
-        categorical_cols = df.select_dtypes(include=['object', 'category']).columns.tolist()
+        categorical_cols = df.select_dtypes(include=['object', 'category', 'string']).columns.tolist()
         numeric_cols = df.select_dtypes(include=[np.number]).columns.tolist()
 
         # 处理分类变量
@@ -190,7 +190,7 @@ class FeatureEngineer:
         logger.info("创建标准化数据集...")
 
         # 识别列类型
-        categorical_cols = df.select_dtypes(include=['object', 'category']).columns.tolist()
+        categorical_cols = df.select_dtypes(include=['object', 'category', 'string']).columns.tolist()
         numeric_cols = df.select_dtypes(include=[np.number]).columns.tolist()
 
         # 复制数据
@@ -311,7 +311,7 @@ class FeatureEngineer:
 
         # 🔧 预处理：对分类列进行标签编码，确保所有特征都是数值型
         df_encoded = df.copy()
-        categorical_cols = df_encoded.select_dtypes(include=['object', 'category']).columns
+        categorical_cols = df_encoded.select_dtypes(include=['object', 'category', 'string']).columns
         for col in categorical_cols:
             df_encoded[col] = LabelEncoder().fit_transform(df_encoded[col].astype(str))
 

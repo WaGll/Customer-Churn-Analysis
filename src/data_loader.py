@@ -116,7 +116,7 @@ class DataLoader:
             report['数值列统计'] = df[numeric_cols].describe().to_dict()
 
         # 分类列统计
-        cat_cols = df.select_dtypes(include=['object', 'category']).columns
+        cat_cols = df.select_dtypes(include=['object', 'category', 'string']).columns
         if len(cat_cols) > 0:
             for col in cat_cols:
                 report['分类列统计'][col] = df[col].value_counts().to_dict()
@@ -145,7 +145,7 @@ class DataLoader:
             df[col] = pd.to_numeric(df[col], downcast='float')
 
         # 优化分类类型
-        for col in df.select_dtypes(include=['object']).columns:
+        for col in df.select_dtypes(include=['object', 'string']).columns:
             if df[col].nunique() / len(df) < 0.5:  # 如果唯一值比例小于50%
                 df[col] = df[col].astype('category')
 

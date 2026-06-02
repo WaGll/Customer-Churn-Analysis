@@ -293,7 +293,7 @@ class DataVisualizer:
             generated_files.append(boxplot_file)
 
         # 3. 分类特征条形图
-        categorical_cols = data.select_dtypes(include=['object', 'category']).columns
+        categorical_cols = data.select_dtypes(include=['object', 'category', 'string']).columns
         if len(categorical_cols) > 0:
             for col in categorical_cols[:5]:  # 限制最多5个分类变量
                 plt.figure(figsize=(12, 6))
@@ -487,7 +487,7 @@ class DataVisualizer:
             generated_files.append(numeric_dist_file)
 
         # 3. 分类变量分布
-        categorical_cols = data.select_dtypes(include=['object', 'category']).columns
+        categorical_cols = data.select_dtypes(include=['object', 'category', 'string']).columns
         if len(categorical_cols) > 0:
             for col in categorical_cols[:5]:  # 限制最多5个分类变量
                 plt.figure(figsize=(10, 6))

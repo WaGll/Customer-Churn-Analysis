@@ -386,7 +386,7 @@ class ClusterAnalyzer:
         try:
             # 转换分类变量为数值
             data_numeric = data.copy()
-            for col in data.select_dtypes(include=['object', 'category']).columns:
+            for col in data.select_dtypes(include=['object', 'category', 'string']).columns:
                 data_numeric[col] = pd.factorize(data[col])[0]
 
             # 计算轮廓系数
@@ -441,7 +441,7 @@ class ClusterAnalyzer:
             if algorithm == 'kmeans':
                 result = self.kmeans_clustering(sample_data, max_clusters=5)
             elif algorithm == 'kprototypes':
-                categorical_cols = sample_data.select_dtypes(include=['object', 'category']).columns.tolist()
+                categorical_cols = sample_data.select_dtypes(include=['object', 'category', 'string']).columns.tolist()
                 result = self.kprototypes_clustering(sample_data, categorical_cols, max_clusters=5)
             else:
                 continue
@@ -486,7 +486,7 @@ class ClusterAnalyzer:
 
         n_iterations = len(labels_list)
         consistency_scores = {
-            'rand_index': 0,
+            'adjusted_rand_index': 0,
             'mutual_info': 0
         }
 
@@ -513,7 +513,7 @@ class ClusterAnalyzer:
                 rand_scores.append(rand_score)
                 mi_scores.append(mi_score)
 
-        consistency_scores['rand_index'] = np.mean(rand_scores)
+        consistency_scores['adjusted_rand_index'] = np.mean(rand_scores)
         consistency_scores['mutual_info'] = np.mean(mi_scores)
 
         return consistency_scores
@@ -528,7 +528,7 @@ class ClusterAnalyzer:
         Returns:
             str: 稳定性等级
         """
-        avg_score = (consistency_scores['rand_index'] + consistency_scores['mutual_info']) / 2
+        avg_score = (consistency_scores['adjusted_rand_index'] + consistency_scores['mutual_info']) / 2
 
         if avg_score > 0.8:
             return "非常稳定"

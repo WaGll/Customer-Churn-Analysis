@@ -142,7 +142,7 @@ def get_categorical_columns(df: pd.DataFrame) -> List[str]:
     Returns:
         分类列名列表
     """
-    return df.select_dtypes(include=['object', 'category']).columns.tolist()
+    return df.select_dtypes(include=['object', 'category', 'string']).columns.tolist()
 
 
 def detect_outliers_iqr(series: pd.Series, threshold: float = 1.5) -> pd.Series:

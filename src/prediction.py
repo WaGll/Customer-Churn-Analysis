@@ -146,7 +146,7 @@ class ChurnPredictor:
 
         # 5. 识别列类型
         numeric_cols = X.select_dtypes(include=[np.number]).columns.tolist()
-        categorical_cols = X.select_dtypes(include=["object", "category"]).columns.tolist()
+        categorical_cols = X.select_dtypes(include=["object", "category", "string"]).columns.tolist()
 
         logger.info(f"数值特征: {len(numeric_cols)}, 分类特征: {len(categorical_cols)}")
 
@@ -235,7 +235,6 @@ class ChurnPredictor:
         # ── Logistic Regression ──
         lr_param_grid = {
             "classifier__C": [0.01, 0.1, 1.0, 10.0],
-            "classifier__penalty": ["l2"],
             "classifier__solver": ["lbfgs", "liblinear"],
             "classifier__max_iter": [2000],
         }

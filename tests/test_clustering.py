@@ -52,7 +52,7 @@ class TestClusterAnalyzer:
         assert "stability_level" in stability
         assert "consistency_scores" in stability
         assert "average_metrics" in stability
-        assert stability["consistency_scores"]["rand_index"] >= -0.1  # ARI 可略低于 0
+        assert stability["consistency_scores"]["adjusted_rand_index"] >= -0.1  # ARI 可略低于 0
 
     def test_analyze_cluster_characteristics(self, analyzer, prepared_data, sample_churn_data):
         """测试聚类特征分析"""
