@@ -56,19 +56,20 @@ jobs:
         PYTHONPATH: .
       run: |
         set -o pipefail
-        pytest tests/ -v --tb=long --cov=src --cov-report=xml 2>&1 | tee test-output.txt
+        pytest tests/ -v --tb=long 2>&1 | tee test-output.txt
+        echo "---DEPENDENCIES---" >> test-output.txt
+        pip freeze | grep -E "pandas|numpy|scikit|kmodes|mlxtend|matplotlib|seaborn|pytest" >> test-output.txt
 
     - name: Show test failures
       if: failure()
       run: |
-        echo '## Pytest Failures' >> $GITHUB_STEP_SUMMARY
+        echo '## Pytest Output (first 80 lines)' >> $GITHUB_STEP_SUMMARY
         echo '```' >> $GITHUB_STEP_SUMMARY
-        grep -A5 "FAILED\|ERROR" test-output.txt | head -100 >> $GITHUB_STEP_SUMMARY || echo "(no specific failures found)" >> $GITHUB_STEP_SUMMARY
+        head -80 test-output.txt >> $GITHUB_STEP_SUMMARY
         echo '```' >> $GITHUB_STEP_SUMMARY
-        echo '' >> $GITHUB_STEP_SUMMARY
-        echo '## Full Test Output (last 100 lines)' >> $GITHUB_STEP_SUMMARY
+        echo '## Pytest Output (last 80 lines)' >> $GITHUB_STEP_SUMMARY
         echo '```' >> $GITHUB_STEP_SUMMARY
-        tail -100 test-output.txt >> $GITHUB_STEP_SUMMARY
+        tail -80 test-output.txt >> $GITHUB_STEP_SUMMARY
         echo '```' >> $GITHUB_STEP_SUMMARY
 
     - name: Upload test output
