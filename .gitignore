@@ -79,3 +79,10 @@ frontend/dist/
 # ==========================================
 d2.png
 dashboard-design.png
+
+# ==========================================
+# Claude Code 内部技能（非项目源码）
+# ==========================================
+.claude/
+frontend/.agents/
+frontend/skills-lock.json
