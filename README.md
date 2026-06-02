@@ -140,7 +140,6 @@ customer_churn_analysis/
 ├── tests/                             # 29 个测试用例
 ├── notebooks/                         # Jupyter 分析演示
 │   └── customer_churn_analysis.ipynb
-├── PROJECT_STATUS.md                  # 项目状态报告（中文）
 ├── PROJECT_REPORT.md                  # 完整分析报告（中文）
 ├── TUTORIAL.md                        # 零基础自学教程（中文）
 ├── README.md                          # 本文件（中文）
@@ -313,7 +312,6 @@ cd frontend && npm run build
 
 | 文档                                  | 说明                                                   |
 | ------------------------------------- | ------------------------------------------------------ |
-| [PROJECT_STATUS.md](./PROJECT_STATUS.md) | 项目状态报告 — 架构、已完成功能、已知限制、下一步计划 |
 | [PROJECT_REPORT.md](./PROJECT_REPORT.md) | 完整分析报告 — 15 章节，从业务背景到改进建议          |
 | [TUTORIAL.md](./TUTORIAL.md)             | 零基础自学教程 — 从环境配置到运行大屏的完整指南       |
 | [README_EN.md](./README_EN.md)           | English version of this document                       |

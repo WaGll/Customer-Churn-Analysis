@@ -133,7 +133,6 @@ customer_churn_analysis/
 ├── tests/                             # 29 test cases
 ├── notebooks/                         # Jupyter analysis demos
 │   └── customer_churn_analysis.ipynb
-├── PROJECT_STATUS.md                  # Detailed project status (Chinese)
 ├── PROJECT_REPORT.md                  # Full analysis report (Chinese)
 └── README.md                          # This file
 ```
