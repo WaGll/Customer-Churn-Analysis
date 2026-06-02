@@ -48,7 +48,8 @@ npm run preview      # preview production build
 
 ```bash
 docker build -t customer-churn-analysis:latest -f docker/Dockerfile .
-docker run --rm customer-churn-analysis:latest python run_analysis.py --no-visualization --skip-prediction
+# Data file is gitignored — generate synthetic data first or mount real data
+docker run --rm -v $(pwd)/data:/app/data customer-churn-analysis:latest python run_analysis.py --no-visualization --skip-prediction
 ```
 
 ## Architecture
@@ -107,13 +108,27 @@ Tests use synthetic data from `tests/conftest.py` (200 rows via `np.random.Rando
 - `tests/test_feature_engineering.py` — FeatureEngineer (encoding strategies, missing values)
 - `tests/test_clustering.py` — ClusterAnalyzer (K-Means, stability, characteristics)
 - `tests/test_prediction.py` — ChurnPredictor (train, evaluate, predict, save/load)
-- `tests/test_api.py` — FastAPI endpoints (root, health, predict — skips predict if no model file)
-- `tests/performance_test.py` — Performance benchmarks (class `PerformanceTester`, not auto-collected by pytest due to class name pattern `Test*`)
+- `tests/test_api.py` — FastAPI endpoints (root, health, predict — skips predict if no model file). Uses `fastapi.testclient.TestClient`, which requires `httpx` (added to `requirements.txt` — was previously a transitive-only dependency that caused CI collection failures)
+- `tests/performance_test.py` — Performance benchmarks (class `PerformanceTester`, not auto-collected by pytest due to `python_classes = ["Test*"]` in `pyproject.toml`)
+
+`pyproject.toml` already configures `addopts = ["--verbose", "--cov=src", "--cov-report=term-missing", "--cov-report=html", "--cov-report=xml"]`, so bare `pytest tests/` runs with coverage. The CI step adds `--tb=long` for details on failure.
+
+## Utilities
+
+- `scripts/generate_test_data.py` — Generate synthetic customer churn data matching real schema (100 rows). Used by CI to provide data for the Docker integration test. Accepts `[n] [output_path]` as positional args.
+- `scripts/deploy.sh` — Docker Compose lifecycle wrapper (install/start/stop/restart/status/logs/clean).
 
 ## CI (GitHub Actions)
 
-`.github/workflows/ci.yml` — Test matrix (Python 3.11, 3.12), performance test, Docker build verification.
-- Uses `PYTHONPATH: .` for imports
-- No data file needed (tests generate synthetic data)
-- Docker test uses `--no-visualization --skip-prediction` to run without data
-- `fail-fast: false` for independent matrix jobs
+`.github/workflows/ci.yml` — Test matrix (Python 3.11, 3.12), performance test, Docker build + integration test.
+- Uses `PYTHONPATH: .` for imports; `fail-fast: false` for independent matrix jobs
+- No real data file needed — tests use synthetic data from `conftest.py`; Docker step generates 100 synthetic rows via `scripts/generate_test_data.py` and volume-mounts them
+- Docker test runs `run_analysis.py --no-visualization --skip-prediction`
+- Pin `httpx` in `requirements.txt` (not optional — `starlette.testclient` needs it for `test_api.py` imports)
+
+## Known Gotchas
+
+- **`httpx` is required explicitly**: `fastapi` lists `httpx` as an optional `[standard]` extra, not a hard dependency. Without it in `requirements.txt`, `from fastapi.testclient import TestClient` fails at import time with `ImportError` in fresh environments (CI, Docker). The starlette deprecation warning "install `httpx2`" is misleading — `httpx` still works as fallback.
+- **Pandas 3.x string dtype**: See [Pandas 3.x Compatibility](#pandas-3x-compatibility) above.
+- **Performance test not auto-collected**: `PerformanceTester` class in `performance_test.py` doesn't match `Test*` pattern — must be run directly: `python tests/performance_test.py --data-path <path>`.
+- **`src/config/` has no `__init__.py`**: This is a namespace package. `from src.config.settings import config` works because `PYTHONPATH` covers the project root.
