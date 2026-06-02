@@ -1,0 +1,2 @@
+[console_scripts]
+run-churn-analysis = run_analysis:main

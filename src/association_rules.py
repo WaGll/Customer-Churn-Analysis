@@ -101,8 +101,7 @@ class AssociationRuleMiner:
                 df,
                 min_support=min_support,
                 use_colnames=True,
-                verbose=0,  # 关闭 verbose 输出
-                n_jobs=config.algorithm.n_jobs
+                verbose=0  # 关闭 verbose 输出
             )
         elif algorithm == 'fp_growth':
             # FP-Growth不支持n_jobs参数
@@ -153,12 +152,7 @@ class AssociationRuleMiner:
         if rules.empty:
             return rules
 
-        # 计算额外的评估指标
-        rules['lift'] = rules['lift']
-        rules['leverage'] = rules['leverage']
-        rules['conviction'] = rules['conviction']
-
-        # 计算Kulczynski度量
+        # 计算 Kulczynski 度量
         rules['kulczynski'] = (rules['support'] * (1 + rules['lift'])) / 2
 
         # 按提升度排序

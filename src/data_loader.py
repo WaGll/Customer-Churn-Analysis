@@ -25,7 +25,6 @@ class DataLoader:
 
     def __init__(self):
         self.cache_info = {}
-        self.memory_monitor = MemoryMonitor()
 
     def load_data(self, file_path: str = None) -> pd.DataFrame:
         """
@@ -74,6 +73,7 @@ class DataLoader:
         start_time = time.time()
 
         # 根据文件扩展名选择加载方式
+        file_path = str(file_path)  # 🔧 兼容 Path 对象
         if file_path.endswith('.xlsx'):
             df = pd.read_excel(file_path)
         elif file_path.endswith('.csv'):
@@ -183,47 +183,3 @@ class DataLoader:
                 logger.info(f"处理进度: {i}/{len(df)}, 内存使用: {memory_mb:.2f}MB")
 
         return batches
-
-
-class MemoryMonitor:
-    """内存监控器"""
-
-    def __init__(self):
-        self.thresholds = {
-            'warning': config.performance.max_memory_mb * 0.8,
-            'critical': config.performance.max_memory_mb
-        }
-
-    def check_memory(self) -> Dict[str, float]:
-        """
-        检查当前内存使用情况
-
-        Returns:
-            Dict: 内存使用信息
-        """
-        process = psutil.Process()
-        memory_info = process.memory_info()
-
-        return {
-            'rss_mb': memory_info.rss / 1024 / 1024,  # 物理内存使用
-            'vms_mb': memory_info.vms / 1024 / 1024,  # 虚拟内存使用
-            'percent': process.memory_percent()
-        }
-
-    def check_threshold(self) -> Optional[str]:
-        """
-        检查内存是否超过阈值
-
-        Returns:
-            Optional[str]: 警告级别，None表示正常
-        """
-        memory_info = self.check_memory()
-
-        if memory_info['rss_mb'] > self.thresholds['critical']:
-            return 'critical'
-        elif memory_info['rss_mb'] > self.thresholds['warning']:
-            return 'warning'
-
-        return None
-
-

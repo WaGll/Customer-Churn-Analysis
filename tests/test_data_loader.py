@@ -12,7 +12,7 @@ import os
 # 添加src目录到Python路径
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'src'))
 
-from src.data_loader import DataLoader, MemoryMonitor
+from src.data_loader import DataLoader
 
 
 class TestDataLoader:
@@ -61,16 +61,6 @@ class TestDataLoader:
 
         # 优化后的内存应该小于或等于原内存
         assert optimized_memory <= original_memory
-
-    def test_memory_monitor(self):
-        """测试内存监控器"""
-        monitor = MemoryMonitor()
-        memory_info = monitor.check_memory()
-
-        assert 'rss_mb' in memory_info
-        assert 'vms_mb' in memory_info
-        assert 'percent' in memory_info
-        assert memory_info['rss_mb'] > 0
 
     def test_batch_process_data(self, data_loader, sample_data):
         """测试批量数据处理"""

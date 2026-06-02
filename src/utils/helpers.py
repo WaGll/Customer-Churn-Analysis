@@ -10,7 +10,6 @@ from typing import Any, Dict, List, Optional, Union
 import json
 import pickle
 import os
-from datetime import datetime
 
 
 def save_json(data: Dict[str, Any], filepath: str, indent: int = 2):
@@ -66,35 +65,6 @@ def load_pickle(filepath: str) -> Any:
     """
     with open(filepath, 'rb') as f:
         return pickle.load(f)
-
-
-def create_timestamp_filename(prefix: str, suffix: str = '.json') -> str:
-    """
-    创建带时间戳的文件名
-
-    Args:
-        prefix: 文件名前缀
-        suffix: 文件后缀
-
-    Returns:
-        完整的文件名
-    """
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    return f"{prefix}_{timestamp}{suffix}"
-
-
-def get_memory_usage(obj: Any) -> float:
-    """
-    获取对象的内存使用量（MB）
-
-    Args:
-        obj: 要检查的对象
-
-    Returns:
-        内存使用量（MB）
-    """
-    import sys
-    return sys.getsizeof(obj) / 1024 / 1024
 
 
 def safe_divide(numerator: float, denominator: float, default: float = 0.0) -> float:
@@ -175,27 +145,6 @@ def get_categorical_columns(df: pd.DataFrame) -> List[str]:
     return df.select_dtypes(include=['object', 'category']).columns.tolist()
 
 
-def calculate_percentiles(series: pd.Series, percentiles: List[float] = None) -> Dict[str, float]:
-    """
-    计算序列的分位数
-
-    Args:
-        series: 数据序列
-        percentiles: 要计算的分位数列表
-
-    Returns:
-        分位数字典
-    """
-    if percentiles is None:
-        percentiles = [0.25, 0.5, 0.75, 0.9, 0.95, 0.99]
-
-    result = {}
-    for p in percentiles:
-        result[f"p{int(p*100)}"] = series.quantile(p)
-
-    return result
-
-
 def detect_outliers_iqr(series: pd.Series, threshold: float = 1.5) -> pd.Series:
     """
     使用IQR方法检测异常值
@@ -214,25 +163,3 @@ def detect_outliers_iqr(series: pd.Series, threshold: float = 1.5) -> pd.Series:
     upper_bound = Q3 + threshold * IQR
 
     return (series < lower_bound) | (series > upper_bound)
-
-
-def flatten_nested_dict(d: Dict[str, Any], parent_key: str = '', sep: str = '_') -> Dict[str, Any]:
-    """
-    展平嵌套字典
-
-    Args:
-        d: 嵌套字典
-        parent_key: 父键
-        sep: 分隔符
-
-    Returns:
-        展平后的字典
-    """
-    items = []
-    for k, v in d.items():
-        new_key = f"{parent_key}{sep}{k}" if parent_key else k
-        if isinstance(v, dict):
-            items.extend(flatten_nested_dict(v, new_key, sep=sep).items())
-        else:
-            items.append((new_key, v))
-    return dict(items)

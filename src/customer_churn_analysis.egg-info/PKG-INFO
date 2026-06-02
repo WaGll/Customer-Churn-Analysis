@@ -1,3 +1,58 @@
+Metadata-Version: 2.4
+Name: customer-churn-analysis
+Version: 1.0.0
+Summary: 高性能客户流失分析系统，支持关联规则挖掘和聚类分析
+Author-email: Claude Code <noreply@anthropic.com>
+License: MIT
+Project-URL: Homepage, https://github.com/yourusername/customer-churn-analysis
+Project-URL: Repository, https://github.com/yourusername/customer-churn-analysis.git
+Project-URL: Documentation, https://github.com/yourusername/customer_churn-analysis/blob/main/README.md
+Project-URL: Issues, https://github.com/yourusername/customer_churn-analysis/issues
+Keywords: churn,analysis,clustering,association-rules,machine-learning
+Classifier: Development Status :: 4 - Beta
+Classifier: Intended Audience :: Developers
+Classifier: Intended Audience :: Science/Research
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Topic :: Scientific/Engineering :: Artificial Intelligence
+Classifier: Topic :: Scientific/Engineering :: Information Analysis
+Requires-Python: >=3.9
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: numpy>=1.24.0
+Requires-Dist: pandas>=2.0.0
+Requires-Dist: psutil>=5.9.0
+Requires-Dist: matplotlib>=3.7.0
+Requires-Dist: seaborn>=0.12.0
+Requires-Dist: plotly>=5.17.0
+Requires-Dist: scikit-learn>=1.3.0
+Requires-Dist: mlxtend>=0.22.0
+Requires-Dist: kmodes>=0.12.0
+Requires-Dist: joblib>=1.3.0
+Requires-Dist: tqdm>=4.66.0
+Provides-Extra: dev
+Requires-Dist: pytest>=7.0.0; extra == "dev"
+Requires-Dist: pytest-cov>=4.0.0; extra == "dev"
+Requires-Dist: black>=23.0.0; extra == "dev"
+Requires-Dist: isort>=5.12.0; extra == "dev"
+Requires-Dist: mypy>=1.0.0; extra == "dev"
+Requires-Dist: flake8>=6.0.0; extra == "dev"
+Provides-Extra: jupyter
+Requires-Dist: jupyter>=1.0.0; extra == "jupyter"
+Requires-Dist: ipywidgets>=8.0.0; extra == "jupyter"
+Requires-Dist: notebook>=6.5.0; extra == "jupyter"
+Requires-Dist: voila>=0.3.0; extra == "jupyter"
+Provides-Extra: web
+Requires-Dist: fastapi>=0.104.0; extra == "web"
+Requires-Dist: uvicorn>=0.24.0; extra == "web"
+Requires-Dist: dash>=2.14.0; extra == "web"
+Provides-Extra: redis
+Requires-Dist: redis>=5.0.0; extra == "redis"
+Dynamic: license-file
+
 # 客户流失分析系统 - 高性能数据挖掘解决方案
 
 [![Python Version](https://img.shields.io/badge/python-3.9+-blue.svg)](https://python.org)
@@ -75,11 +130,10 @@ customer_churn_analysis/
 │   ├── feature_engineering.py # 特征工程模块
 │   ├── association_rules.py  # 关联规则挖掘模块
 │   ├── clustering.py        # 聚类分析模块
-│   ├── prediction.py        # 预测建模模块 🆕
 │   ├── visualization.py      # 可视化模块
-│   ├── api.py               # FastAPI 预测服务 🆕
 │   └── utils/                # 工具函数
 │       ├── __init__.py
+│       ├── logger.py         # 日志工具
 │       └── helpers.py        # 辅助函数
 ├── tests/                    # 测试目录
 │   
@@ -133,14 +187,6 @@ customer_churn_analysis/
 - **自定义样式** - 业务导向的配色方案
 - **多格式导出** - HTML、PNG等多种格式
 
-### 6. 预测建模 🆕
-- **多模型对比** - Logistic Regression、Random Forest、XGBoost
-- **自动超参调优** - GridSearchCV + Stratified K-Fold
-- **自动模型选择** - 基于 ROC-AUC 选择最佳模型
-- **模型可解释性** - SHAP 特征重要性分析
-- **模型持久化** - 自动保存最佳模型 (output/models/churn_model.pkl)
-- **API 服务** - FastAPI 实时预测接口 (POST /predict)
-
 ## 🛠️ 使用方法
 
 ### 基本使用
@@ -171,18 +217,6 @@ cluster_analyzer = ClusterAnalyzer()
 clusters = cluster_analyzer.kmeans_clustering(
     datasets['standardized']
 )
-
-# 5. 预测建模 🆕
-from src.prediction import ChurnPredictor
-predictor = ChurnPredictor()
-summary = predictor.run(
-    df,
-    target_col='用户流失标签',
-    test_size=0.2,
-    cv_folds=5
-)
-print(f"最佳模型: {summary['best_model']}")
-print(f"ROC-AUC: {summary['best_metrics']['roc_auc']:.4f}")
 ```
 
 ### 命令行使用

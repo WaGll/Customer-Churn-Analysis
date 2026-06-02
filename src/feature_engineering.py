@@ -155,6 +155,9 @@ class FeatureEngineer:
         """
         logger.info("创建混合编码数据集...")
 
+        # 复制数据，避免副作用
+        df = df.copy()
+
         # 识别列类型
         categorical_cols = df.select_dtypes(include=['object', 'category']).columns.tolist()
         numeric_cols = df.select_dtypes(include=[np.number]).columns.tolist()
@@ -308,19 +311,26 @@ class FeatureEngineer:
         """
         from sklearn.ensemble import RandomForestClassifier
         from sklearn.feature_selection import mutual_info_classif
+        from sklearn.preprocessing import LabelEncoder
+
+        # 🔧 预处理：对分类列进行标签编码，确保所有特征都是数值型
+        df_encoded = df.copy()
+        categorical_cols = df_encoded.select_dtypes(include=['object', 'category']).columns
+        for col in categorical_cols:
+            df_encoded[col] = LabelEncoder().fit_transform(df_encoded[col].astype(str))
 
         # 使用随机森林计算特征重要性
         rf = RandomForestClassifier(n_estimators=50, n_jobs=config.algorithm.n_jobs, random_state=config.data.random_seed)
-        rf.fit(df, target)
-        rf_importance = dict(zip(df.columns, rf.feature_importances_))
+        rf.fit(df_encoded, target)
+        rf_importance = dict(zip(df_encoded.columns, rf.feature_importances_))
 
         # 使用互信息计算
-        mi_scores = mutual_info_classif(df, target, n_jobs=config.algorithm.n_jobs)
-        mi_importance = dict(zip(df.columns, mi_scores))
+        mi_scores = mutual_info_classif(df_encoded, target, n_jobs=config.algorithm.n_jobs)
+        mi_importance = dict(zip(df_encoded.columns, mi_scores))
 
         # 综合评分
         combined_importance = {}
-        for feature in df.columns:
+        for feature in df_encoded.columns:
             combined_importance[feature] = (rf_importance[feature] + mi_importance.get(feature, 0)) / 2
 
         # 排序

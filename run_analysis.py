@@ -25,6 +25,7 @@ from src.feature_engineering import FeatureEngineer
 from src.association_rules import AssociationRuleMiner
 from src.clustering import ClusterAnalyzer
 from src.visualization import DataVisualizer
+from src.prediction import ChurnPredictor
 
 # 配置日志
 def setup_logging(log_level='INFO', log_file=None):
@@ -72,6 +73,10 @@ def parse_args():
                        help='关联规则算法')
     parser.add_argument('--max-clusters', '-k', type=int, default=5,
                        help='最大聚类数')
+    parser.add_argument('--skip-prediction', action='store_true',
+                       help='跳过预测建模步骤')
+    parser.add_argument('--no-xgboost', action='store_true',
+                       help='禁用 XGBoost（仅使用 LR + RF）')
 
     return parser.parse_args()
 
@@ -79,6 +84,10 @@ def main():
     """主函数"""
     # 解析参数
     args = parse_args()
+
+    # 控制 XGBoost 可用性
+    if args.no_xgboost:
+        os.environ['SKIP_XGBOOST'] = '1'
 
     # 设置日志
     logger = setup_logging(args.log_level, args.log_file)
@@ -316,6 +325,29 @@ def main():
 
             pbar.update(1)
 
+            # 6. 预测建模（可选）
+            if not args.skip_prediction:
+                logger.info("\n[步骤 6/6] 预测建模...")
+                start_time = time.time()
+
+                predictor = ChurnPredictor()
+
+                # 使用 One-Hot 编码数据（已包含数值特征和目标列）
+                prediction_summary = predictor.run(
+                    df=datasets['one_hot'],
+                    target_col='用户流失标签',
+                    test_size=0.2,
+                    cv_folds=5,
+                    output_model_path=os.path.join(args.output_dir, 'models', 'churn_model.pkl'),
+                    output_metrics_path=os.path.join(results_dir, 'model_metrics.json'),
+                    output_roc_path=os.path.join(vis_subdir, 'roc_curve.html'),
+                )
+
+                logger.info(f"预测建模完成, 耗时: {time.time() - start_time:.2f}s")
+            else:
+                prediction_summary = None
+                logger.info("\n[步骤 6/6] 预测建模已跳过")
+
         # 生成总结报告
         logger.info("\n" + "=" * 60)
         logger.info("分析完成！")
@@ -336,6 +368,11 @@ def main():
         if 'kmeans' in cluster_results:
             logger.info(f"2. 客户分为 {cluster_results['kmeans']['n_clusters']} 个群体")
             logger.info(f"3. 聚类稳定性: {stability_kmeans['stability_level']}")
+
+        if prediction_summary:
+            logger.info(f"4. 最佳预测模型: {prediction_summary['best_model']}")
+            logger.info(f"   ROC-AUC: {prediction_summary['best_metrics']['roc_auc']:.4f}")
+            logger.info(f"   F1-Score: {prediction_summary['best_metrics']['f1']:.4f}")
 
     except Exception as e:
         logger.error(f"分析过程中发生错误: {str(e)}")
