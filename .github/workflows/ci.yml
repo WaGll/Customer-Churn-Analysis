@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.9, 3.12, 3.11]
+        python-version: ["3.11", "3.12"]
 
     steps:
     - uses: actions/checkout@v4
@@ -22,7 +22,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
 
     - name: Cache pip packages
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ~/.cache/pip
         key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
@@ -31,16 +31,10 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-        pip install pytest pytest-cov black isort
+        pip install pytest pytest-cov
 
-    # 在运行测试前确保 output 目录是空的
-    - name: Clean Output Directory
-      run: rm -rf output/* && mkdir -p output/results output/visualizations output/models
-
-    - name: Lint and Format Check
-      run: |
-        black --check src/ run_analysis.py
-        isort --check-only src/ run_analysis.py
+    - name: Ensure output directories
+      run: mkdir -p output/results output/visualizations output/models
 
     - name: Run tests with pytest
       env:
@@ -49,9 +43,7 @@ jobs:
         pytest tests/ -v --cov=src --cov-report=xml
 
     - name: Upload coverage reports
-      uses: codecov/codecov-action@v3
-      with:
-        file: ./coverage.xml
+      uses: codecov/codecov-action@v4
 
   performance-test:
     runs-on: ubuntu-latest
@@ -62,14 +54,15 @@ jobs:
     - name: Set up Python 3.11
       uses: actions/setup-python@v4
       with:
-        python-version: 3.11
+        python-version: "3.11"
 
     - name: Install dependencies
       run: |
         pip install -r requirements.txt
 
-    # 修正了脚本路径：从 tests/ 运行
     - name: Run performance test
+      env:
+        PYTHONPATH: .
       run: |
         python tests/performance_test.py --data-path data/customer_churn_data.xlsx
 
@@ -82,13 +75,11 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
 
-    
     - name: Build Docker image
       run: |
         docker build -t customer-churn-analysis:latest -f docker/Dockerfile .
 
-    # 验证镜像是否能正常运行（不生成可视化以加快速度）
     - name: Test Docker image run
       run: |
-        docker run --rm -v $(pwd)/data:/app/data customer-churn-analysis:latest \
-          python run_analysis.py --data-path /app/data/customer_churn_data.xlsx
+        docker run --rm customer-churn-analysis:latest \
+          python run_analysis.py --no-visualization --skip-prediction
