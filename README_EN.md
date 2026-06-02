@@ -146,11 +146,11 @@ customer_churn_analysis/
 
 | Page | Description |
 |------|-------------|
-| ![Overview](./screenshots/overview.png) | KPI cards, churn donut, tenure/category charts, model comparison table |
+| ![Overview](./screenshots/overview.png) | KPI cards, churn donut, tenure gradient bar chart, category chart, model comparison |
 | ![Prediction](./screenshots/prediction.png) | 17-field form + ECharts gauge + risk badge |
-| ![Segmentation](./screenshots/segmentation.png) | Cluster cards, scatter plot, silhouette score with quality alert |
-| ![Features](./screenshots/features.png) | Top-15 importance chart, click-to-distribute, percentage toggle |
-| ![Rules](./screenshots/rules.png) | Sortable rules table, lift highlighting, loss-related rule filter |
+| ![Segmentation](./screenshots/segmentation.png) | Cluster donut, scatter plot, churn rate gradient bar chart, cluster overview table |
+| ![Features](./screenshots/features.png) | Top-15 SHAP importance gradient chart, model summary card, feature list |
+| ![Rules](./screenshots/rules.png) | Force-directed graph, Top-5 Lift gradient bar chart, sortable rules table |
 
 ---
 

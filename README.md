@@ -153,13 +153,13 @@ customer_churn_analysis/
 
 > 以下为实际运行截图。
 
-| 页面                                      | 说明                                              |
-| ----------------------------------------- | ------------------------------------------------- |
-| ![分析概览](./screenshots/overview.png)     | KPI 卡片、流失饼图、使用时长/品类图表、模型对比表 |
-| ![流失预测](./screenshots/prediction.png)   | 17 字段表单 + ECharts 仪表盘 + 风险等级标签       |
-| ![客户分群](./screenshots/segmentation.png) | 聚类卡片、散点图、轮廓系数质量警告                |
-| ![特征归因](./screenshots/features.png)     | Top-15 重要性图、点击联动分布图、百分比切换       |
-| ![关联规则](./screenshots/rules.png)        | 可排序规则表格、Lift 高亮、流失规则筛选           |
+| 页面 | 说明 |
+|------|------|
+| ![分析概览](./screenshots/overview.png) | KPI 卡片、流失环形图、使用时长渐变柱状图、品类图表、模型对比表 |
+| ![流失预测](./screenshots/prediction.png) | 17 字段表单 + ECharts 仪表盘 + 风险等级标签 |
+| ![客户分群](./screenshots/segmentation.png) | 聚类环形图、散点图、流失率渐变柱状图、聚类概览表 |
+| ![特征归因](./screenshots/features.png) | Top-15 SHAP 重要性渐变图、模型摘要卡片、特征列表 |
+| ![关联规则](./screenshots/rules.png) | 力导向关系网络图、Top-5 Lift 渐变柱状图、可排序规则表格 |
 
 ---
 
