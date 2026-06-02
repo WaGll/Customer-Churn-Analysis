@@ -1,0 +1,246 @@
+/* ═══════════════════════════════════════════════
+   Donezo Micro-Interaction & Motion System
+   Premium B2B SaaS transitions + animations
+   ═══════════════════════════════════════════════ */
+
+/* ── Page Transitions ─────────────────────────────────────── */
+
+.page-slide-up-enter-active,
+.page-slide-up-leave-active {
+  transition: opacity 250ms cubic-bezier(0.4, 0, 0.2, 1),
+              transform 250ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.page-slide-up-enter-from {
+  opacity: 0;
+  transform: translateY(8px);
+}
+.page-slide-up-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
+}
+
+.page-scale-in-enter-active {
+  transition: opacity 300ms cubic-bezier(0.34, 1.56, 0.64, 1),
+              transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.page-scale-in-leave-active {
+  transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1),
+              transform 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.page-scale-in-enter-from {
+  opacity: 0;
+  transform: scale(0.97);
+}
+.page-scale-in-leave-to {
+  opacity: 0;
+  transform: scale(0.97);
+}
+
+/* ── Staggered List Entries ────────────────────────────────── */
+
+.stagger-list > * {
+  opacity: 0;
+  transform: translateY(12px);
+  animation: stagger-in 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+.stagger-list > *:nth-child(1)  { animation-delay: 0ms; }
+.stagger-list > *:nth-child(2)  { animation-delay: 60ms; }
+.stagger-list > *:nth-child(3)  { animation-delay: 120ms; }
+.stagger-list > *:nth-child(4)  { animation-delay: 180ms; }
+.stagger-list > *:nth-child(5)  { animation-delay: 240ms; }
+.stagger-list > *:nth-child(6)  { animation-delay: 300ms; }
+.stagger-list > *:nth-child(7)  { animation-delay: 360ms; }
+.stagger-list > *:nth-child(8)  { animation-delay: 420ms; }
+.stagger-list > *:nth-child(9)  { animation-delay: 480ms; }
+.stagger-list > *:nth-child(10) { animation-delay: 540ms; }
+.stagger-list > *:nth-child(11) { animation-delay: 600ms; }
+.stagger-list > *:nth-child(12) { animation-delay: 660ms; }
+
+@keyframes stagger-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Count Up Animation ────────────────────────────────────── */
+
+.count-up {
+  animation: count-up-pop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes count-up-pop {
+  from { opacity: 0; transform: scale(0.85) translateY(6px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* ── Shimmer Loading ───────────────────────────────────────── */
+
+.shimmer {
+  position: relative;
+  overflow: hidden;
+}
+.shimmer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.3) 30%,
+    rgba(255, 255, 255, 0.5) 50%,
+    rgba(255, 255, 255, 0.3) 70%,
+    transparent 100%
+  );
+  animation: shimmer-slide 2s ease-in-out infinite;
+}
+
+@keyframes shimmer-slide {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* ── Pulse Glow ────────────────────────────────────────────── */
+
+.pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.4); }
+  50%      { box-shadow: 0 0 0 8px rgba(74, 222, 128, 0); }
+}
+
+/* ── Breathing Glow ────────────────────────────────────────── */
+
+.breath-glow {
+  animation: breath-glow 3s ease-in-out infinite;
+}
+
+@keyframes breath-glow {
+  0%, 100% { box-shadow: 0 0 12px rgba(74, 222, 128, 0.08); }
+  50%      { box-shadow: 0 0 28px rgba(74, 222, 128, 0.18); }
+}
+
+/* ── Float (subtle up/down) ────────────────────────────────── */
+
+.float-subtle {
+  animation: float-subtle 4s ease-in-out infinite;
+}
+
+@keyframes float-subtle {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-4px); }
+}
+
+/* ── Card Enter ────────────────────────────────────────────── */
+
+.card-enter {
+  opacity: 0;
+  transform: translateY(16px);
+  animation: card-enter 0.45s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes card-enter {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Spin (for refresh icons) ──────────────────────────────── */
+
+.spin-once {
+  transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.spin-once:active {
+  transform: rotate(180deg);
+}
+
+/* ── Hover Lift (reusable mixin pattern) ───────────────────── */
+
+.hover-lift {
+  transition: transform var(--transition-normal),
+              box-shadow var(--transition-slow),
+              border-color var(--transition-normal);
+}
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card-hover);
+  border-color: var(--color-border-subtle);
+}
+
+/* ── Focus Ring ────────────────────────────────────────────── */
+
+.focus-ring:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.15);
+  border-color: #4ADE80;
+}
+
+/* ── Skeleton Loading ──────────────────────────────────────── */
+
+.skeleton-card {
+  background: var(--color-bg-card);
+  border-radius: var(--radius-card);
+  padding: var(--spacing-card-padding);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+.skeleton-line {
+  height: 14px;
+  border-radius: 7px;
+  background: linear-gradient(90deg, #F1F5F9 25%, #E8ECF0 50%, #F1F5F9 75%);
+  background-size: 200% 100%;
+  animation: shimmer-slide 2s ease-in-out infinite;
+  margin-bottom: 12px;
+}
+.skeleton-line:last-child { margin-bottom: 0; }
+.skeleton-line-lg  { width: 60%; height: 28px; border-radius: 9px; }
+.skeleton-line-md  { width: 85%; }
+.skeleton-line-sm  { width: 40%; }
+.skeleton-line-xl  { width: 45%; height: 36px; border-radius: 10px; }
+.skeleton-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(90deg, #F1F5F9 25%, #E8ECF0 50%, #F1F5F9 75%);
+  background-size: 200% 100%;
+  animation: shimmer-slide 2s ease-in-out infinite;
+  margin-bottom: 16px;
+}
+.skeleton-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--spacing-item-gap);
+}
+.skeleton-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-item-gap);
+}
+.skeleton-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 40px 20px;
+}
+
+/* ── Reduced Motion ────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .stagger-list > *,
+  .card-enter,
+  .count-up,
+  .float-subtle,
+  .pulse-glow,
+  .breath-glow,
+  .skeleton-line,
+  .skeleton-circle,
+  .shimmer::after {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .skeleton-line,
+  .skeleton-circle {
+    background: #F1F5F9;
+  }
+}

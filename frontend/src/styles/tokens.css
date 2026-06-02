@@ -1,0 +1,194 @@
+/* ═══════════════════════════════════════════════
+   Donezo Design System — Forest Green Tokens
+   Inspired by premium B2B SaaS aesthetics
+   ═══════════════════════════════════════════════ */
+
+:root {
+  /* ── Color: Background ── */
+  --color-bg-page: #F8FAFC;
+  --color-bg-card: #FFFFFF;
+  --color-bg-card-hover: #FAFBFC;
+  --color-bg-elevated: #FFFFFF;
+  --color-bg-input: #F8FAFC;
+  --color-bg-sidebar: #FAFBFC;
+  --color-bg-sidebar-hover: #F3F5F7;
+
+  /* ── Color: Border (subtle) ── */
+  --color-border-subtle: #E8ECF0;
+
+  /* ── Color: Brand (Donezo Forest Green) ── */
+  --color-primary: #0F4A28;
+  --color-primary-light: #4ADE80;
+  --color-primary-lighter: #BBF7D0;
+  --color-primary-soft: rgba(15, 74, 40, 0.06);
+  --color-primary-glow: rgba(74, 222, 128, 0.15);
+
+  /* ── Color: Accent ── */
+  --color-accent-teal: #0EA5E9;
+  --color-accent-rose: #EF4444;
+  --color-accent-green: #22C55E;
+  --color-accent-amber: #F59E0B;
+  --color-accent-red: #DC2626;
+  --color-accent-violet: #8B5CF6;
+
+  /* ── Color: Semantic ── */
+  --color-success: #22C55E;
+  --color-success-soft: rgba(34, 197, 94, 0.08);
+  --color-danger: #EF4444;
+  --color-danger-soft: rgba(239, 68, 68, 0.06);
+  --color-warning: #F59E0B;
+  --color-warning-soft: rgba(245, 158, 11, 0.08);
+  --color-info: #0EA5E9;
+  --color-info-soft: rgba(14, 165, 233, 0.08);
+
+  /* ── Color: Text ── */
+  --color-text-primary: #0F172A;
+  --color-text-secondary: #64748B;
+  --color-text-muted: #94A3B8;
+  --color-text-inverse: #FFFFFF;
+
+  /* ── Color: Border ── */
+  --color-border: #F1F5F9;
+  --color-border-light: #F8FAFC;
+
+  /* ── Color: Churn-specific ── */
+  --churn-low: #22C55E;
+  --churn-medium: #F59E0B;
+  --churn-high: #EF4444;
+  --churn-critical: #DC2626;
+  --churn-retained: #0F4A28;
+
+  /* ── Border Radius ── */
+  --radius-xs: 6px;
+  --radius-sm: 12px;
+  --radius-card: 20px;
+  --radius-lg: 24px;
+  --radius-xl: 28px;
+  --radius-full: 9999px;
+
+  /* ── Shadows (Donezo fluid floating) ── */
+  --shadow-soft: 0 1px 3px rgba(15, 23, 42, 0.04);
+  --shadow-card: 0 10px 25px -5px rgba(15, 23, 42, 0.02),
+    0 4px 12px -4px rgba(15, 23, 42, 0.01);
+  --shadow-card-hover: 0 20px 40px -10px rgba(15, 23, 42, 0.06),
+    0 8px 20px -8px rgba(15, 23, 42, 0.03);
+  --shadow-elevated: 0 25px 50px -12px rgba(15, 23, 42, 0.08);
+  --shadow-elevated-2: 0 30px 60px -15px rgba(15, 23, 42, 0.1);
+  --shadow-glow-green: 0 0 20px rgba(74, 222, 128, 0.15);
+  --shadow-glow-amber: 0 0 20px rgba(245, 158, 11, 0.15);
+  --shadow-glow-red: 0 0 20px rgba(239, 68, 68, 0.12);
+
+  /* ── Spacing ── */
+  --spacing-page-padding: 32px;
+  --spacing-card-padding: 24px;
+  --spacing-section-gap: 20px;
+  --spacing-section-lg: 32px;
+  --spacing-section-xl: 48px;
+  --spacing-item-gap: 16px;
+
+  /* ── Typography ── */
+  --font-family-sans: 'Inter', -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-family-mono: 'JetBrains Mono', 'Fira Code', ui-monospace, monospace;
+
+  --font-size-title: 24px;
+  --font-size-subtitle: 14px;
+  --font-size-kpi-value: 32px;
+  --font-size-kpi-label: 12px;
+  --font-size-hero: 36px;
+  --font-size-section: 18px;
+
+  --font-weight-heading: 700;
+  --font-weight-number: 700;
+
+  /* ── Sidebar ── */
+  --sidebar-width: 260px;
+  --sidebar-collapsed-width: 64px;
+  --sidebar-bg: #FFFFFF;
+  --sidebar-border: #F1F5F9;
+  --sidebar-text: #64748B;
+  --sidebar-text-active: #0F4A28;
+  --sidebar-active-bg: rgba(74, 222, 128, 0.08);
+  --sidebar-hover-bg: rgba(15, 23, 42, 0.03);
+  --sidebar-text-muted: #94A3B8;
+
+  /* ── Transition ── */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-spring: 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* ── Layout: Header ── */
+  --header-height: 64px;
+  --header-bg: #FFFFFF;
+  --sidebar-divider: #F1F5F9;
+}
+
+/* ── Element Plus Overrides (Donezo Light Theme) ── */
+:root {
+  --el-color-primary: #0F4A28;
+  --el-color-primary-light-3: rgba(15, 74, 40, 0.7);
+  --el-color-primary-light-5: rgba(15, 74, 40, 0.5);
+  --el-color-primary-light-7: rgba(15, 74, 40, 0.3);
+  --el-color-primary-light-8: rgba(15, 74, 40, 0.2);
+  --el-color-primary-light-9: rgba(15, 74, 40, 0.1);
+  --el-color-success: #22C55E;
+  --el-color-warning: #F59E0B;
+  --el-color-danger: #EF4444;
+  --el-color-info: #0EA5E9;
+
+  --el-bg-color-page: #F8FAFC;
+  --el-bg-color: #FFFFFF;
+  --el-bg-color-overlay: #FFFFFF;
+
+  --el-text-color-primary: #0F172A;
+  --el-text-color-regular: #64748B;
+  --el-text-color-secondary: #94A3B8;
+  --el-text-color-placeholder: #94A3B8;
+
+  --el-border-color: #F1F5F9;
+  --el-border-color-light: #F8FAFC;
+  --el-border-color-lighter: #F8FAFC;
+  --el-border-color-extra-light: #F8FAFC;
+
+  --el-border-radius-base: 12px;
+  --el-border-radius-small: 8px;
+  --el-border-radius-round: 9999px;
+
+  --el-box-shadow-light: 0 10px 25px -5px rgba(15, 23, 42, 0.02),
+    0 4px 12px -4px rgba(15, 23, 42, 0.01);
+
+  --el-disabled-bg-color: #F8FAFC;
+  --el-disabled-text-color: #94A3B8;
+  --el-disabled-border-color: #F1F5F9;
+
+  --el-fill-color-blank: #FFFFFF;
+  --el-fill-color-light: #F8FAFC;
+  --el-fill-color: #F1F5F9;
+}
+
+/* ── Reduced Motion ── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}
