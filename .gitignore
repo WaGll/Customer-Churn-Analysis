@@ -45,6 +45,10 @@ data/*.xlsx
 data/*.csv
 data/processed/
 
+# 允许 data 目录下的 .gitkeep（保持目录结构）
+!data/.gitkeep
+!data/processed/.gitkeep
+
 # 如果你有特定的 demo 数据需要上传，请取消下面这行的注释
 # !data/demo_data.csv
 
