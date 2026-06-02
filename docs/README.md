@@ -1,74 +1,104 @@
 开发者详细文档 (Technical Documentation)
-欢迎阅读 客户流失分析系统 的深度文档。本目录包含了系统的核心设计逻辑、算法选择依据以及扩展指南。
+
+欢迎阅读客户流失分析系统的深度文档。本目录包含系统核心设计逻辑、算法选择依据及扩展指南。
 
 📖 文档索引
-API 参考手册 (API.md) - 详细的函数接口说明。
 
-场景应用示例 (EXAMPLES.md) - 针对业务场景的代码片段。
-
-原始数据说明 (如果存在) - 字段含义与数据字典。
+- **API 参考手册 (API.md)** — 详细函数接口 + REST API 端点说明
+- **场景应用示例 (EXAMPLES.md)** — 业务场景代码片段
+- **主 README.md** — 项目概览、快速开始、页面截图
 
 🏗️ 核心架构说明
-本系统采用模块化设计，确保各分析组件（关联规则、聚类、特征工程）可以独立运行或组合调用。
 
-数据流向
-Raw Data: 从 data/ 加载 Excel/CSV。
+系统采用模块化设计，前后端分离架构：
 
-Preprocessing: 执行类型转换、内存优化及多种编码（One-Hot, Mixed, Standardized）。
+**后端 (Python/FastAPI)：**
 
-Analysis Engines:
+```
+data/ → src/data_loader.py → src/feature_engineering.py
+     → src/association_rules.py (FP-Growth)
+     → src/clustering.py (K-Means)
+     → src/prediction.py (LR/RF/XGBoost)
+     → src/explainability.py (SHAP)
+     → output/results/*.json → src/api.py + src/api_v2.py (FastAPI)
+```
 
-Association Rules: 挖掘高频流失路径。
+**前端 (Vue3/TypeScript)：**
 
-Clustering: 划分客户群体画像。
+```
+frontend/src/
+  ├── views/       # 5 页面: Overview/Prediction/Segmentation/Features/Rules
+  ├── components/  # KpiCard, AppIcon, chart wrappers (Bar/Pie/Scatter/Line)
+  ├── api/         # Axios 封装, 类型定义
+  ├── stores/      # Pinia 状态管理
+  ├── router/      # Vue Router 配置
+  └── styles/      # tokens.css (设计令牌), chartTheme.ts (ECharts 渐变/颜色常量)
+```
 
-Output: 结果持久化为 JSON/CSV，并生成交互式 HTML 报告。
+**数据流：**
+1. `python run_analysis.py` — 执行分析管道，生成 `output/results/*.json`
+2. `python run_prediction.py` — 训练模型，保存到 `output/models/`
+3. `python run_api.py` — 启动 FastAPI (`:8000`)，提供 9 个 REST 端点
+4. `cd frontend && npm run dev` — 启动 Vite 开发服务器 (`:5173`)，代理 `/api` 到后端
 
 🔬 算法逻辑深度解析
+
 1. 关联规则挖掘 (FP-Growth)
-系统放弃了传统的 Apriori 算法，采用了更高效的 FP-Growth。
+采用 mlxtend 的 FP-Growth 算法（min_support=0.1），挖掘客户特征与流失的关联模式。
+- 关键指标：Lift > 1 表示前项对后项（流失）有正向触发
+- 结果：~4,398 条规则（含 395 条流失相关），按 Lift 降序取 Top-100
 
-目的: 发现类似 [频繁投诉] + [长久未登录] -> [极高流失风险] 的模式。
+2. 聚类分析 (K-Means)
+对标准化后的数值特征执行 K-Means (k=5)。
+- 轮廓系数：~0.147（商业数据交叉特征导致的边界模糊，属正常现象）
+- 每群生成典型特征标签，支持散点图交互选择 + 高亮
 
-关键指标: 我们重点关注 Lift (提升度)。如果 Lift > 1，说明前件对后件（流失）有显著的正向触发作用。
+3. 预测建模
+三类模型的 Pipeline（预处理 + 训练）：
+- Logistic Regression: ROC-AUC 0.8487（最佳，业务可解释性最强）
+- Random Forest: ROC-AUC 0.8413
+- XGBoost: ROC-AUC 0.8337
 
-2. 聚类分析 (K-Means & K-Prototypes)
-K-Means: 用于标准化后的数值特征。
-
-K-Prototypes: 用于处理同时包含分类（如“性别”）和数值（如“余额”）的原始数据。
-
-稳定性测试: 系统会自动运行多次聚类并计算平均轮廓系数，以评估分群的可信度。
+4. SHAP 可解释性
+使用 SHAP LinearExplainer/KernelExplainer 生成特征重要性排名，接入 API `/model/importance`。
 
 🛠️ 二次开发指南
+
 如何添加新的特征处理逻辑？
-在 src/feature_engineering.py 中新增一个处理函数。
+1. 在 `src/feature_engineering.py` 中新增处理函数
+2. 在 `preprocess_data` 主函数中调用该方法
+3. 确保输出保持字典/DataFrame 结构以兼容后续模块
 
-在 preprocess_data 主函数中调用该方法。
+如何添加新的 API 端点？
+1. 在 `src/api_v2.py` 中添加路由函数（使用已有的 `_load_json` / `_load_cached_data` 工具）
+2. 在 `src/api.py` 的 `app.include_router` 中注册
 
-确保输出格式依然保持字典结构以兼容后续模块。
-
-如何调整可视化模板？
-所有的 HTML 生成逻辑位于 src/visualization.py。
-
-本系统使用 Plotly 进行交互渲染。
-
-若需修改样式，请调整 export_all_plots_to_html 函数中的布局参数。
+如何添加新的前端页面？
+1. 在 `frontend/src/views/` 中新建 Vue SFC
+2. 在 `frontend/src/router/index.ts` 中添加路由
+3. 在 `frontend/src/components/AppSidebar.vue` 中添加菜单项
+4. 使用现有的 chart wrapper 组件（BarChart/PieChart/ScatterChart）和 `useECharts` composable
 
 🧪 测试说明
-我们使用 pytest 进行覆盖测试，并使用自定义的 performance.py 工具监控压力。
-
-单元测试: 验证数据加载与编码的正确性。
-
-性能测试: 模拟 10w+ 数据量下的内存峰值与耗时。
 
 运行测试命令：
 
-Bash
-make test          # 基础测试
-make perf-test     # 性能压测
+```bash
+# 全部测试
+pytest tests/ -v
+
+# 单文件测试
+pytest tests/test_data_loader.py -v
+
+# 带覆盖率
+pytest tests/ -v --cov=src --cov-report=html
+```
+
+当前测试覆盖：29 全部通过，核心路径覆盖 ~40%。
+
 🔗 相关资源
-项目仓库: [GitHub Repo Link]
 
-问题反馈: [Issue Tracker Link]
-
-作者: 2026 Customer Churn Analysis Team
+- 项目主文档：[../README.md](../README.md)
+- 教程文档：[../TUTORIAL.md](../TUTORIAL.md)
+- 项目状态：[../PROJECT_STATUS.md](../PROJECT_STATUS.md)
+- 分析报告：[../PROJECT_REPORT.md](../PROJECT_REPORT.md)
