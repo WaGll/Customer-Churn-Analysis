@@ -12,8 +12,8 @@ import argparse
 import sys
 import os
 
-# 确保 src 可导入
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
+# 添加项目根目录到 Python 路径（确保 src.xxx 导入正常）
+sys.path.insert(0, os.path.dirname(__file__))
 
 
 def main():

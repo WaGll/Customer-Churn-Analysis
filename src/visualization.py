@@ -2,12 +2,9 @@
 可视化模块 - 高效的数据可视化工具
 """
 
-import sys
-import os
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 import pandas as pd
 import numpy as np
+import os
 import matplotlib.pyplot as plt
 import seaborn as sns
 import plotly.graph_objects as go
@@ -16,9 +13,9 @@ from plotly.subplots import make_subplots
 from typing import Dict, List, Tuple, Optional, Any
 import logging
 import time
-from config.settings import config
+from src.config.settings import config
 import plotly.io as pio
-from utils.performance import monitor_performance
+from src.utils.performance import monitor_performance
 
 logging.getLogger('matplotlib.category').setLevel(logging.WARNING)
 

@@ -11,10 +11,6 @@ FastAPI 预测服务 — 客户流失概率预测接口
     GET  /          — 服务信息
 """
 
-import sys
-import os
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 import logging
 from pathlib import Path
 from typing import List, Optional
@@ -22,6 +18,7 @@ from typing import List, Optional
 import numpy as np
 import pandas as pd
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
 logger = logging.getLogger(__name__)
@@ -34,12 +31,21 @@ app = FastAPI(
     version="1.0.0",
 )
 
-# 模型路径
-MODEL_PATH = Path(__file__).resolve().parents[1] / "output" / "models" / "churn_model.pkl"
+# CORS 中间件（生产环境应限制 allow_origins）
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-# 全局预测器（延迟加载）
-_predictor = None
-_feature_names: List[str] = []
+# 注册数据分析展示 API
+from src.api_v2 import router as api_v2_router
+app.include_router(api_v2_router, prefix="/api")
+
+# 共享模型服务
+from src.model_service import get_predictor, compute_risk_level, MODEL_PATH, _predictor
 
 # ── 数据模型 ────────────────────────────────────────────────
 
@@ -98,45 +104,6 @@ class PredictionResponse(BaseModel):
     model: str = Field(..., description="使用的模型名称")
 
 
-# ── 模型加载 ────────────────────────────────────────────────
-
-
-def _load_predictor():
-    """加载预测模型（带缓存）"""
-    global _predictor, _feature_names
-
-    if _predictor is not None:
-        return _predictor
-
-    if not MODEL_PATH.exists():
-        raise FileNotFoundError(
-            f"模型文件不存在: {MODEL_PATH}\n"
-            f"请先运行预测建模: python run_prediction.py 或 python run_analysis.py"
-        )
-
-    from src.prediction import ChurnPredictor
-
-    _predictor = ChurnPredictor.load_model(str(MODEL_PATH))
-    _feature_names = _predictor.feature_names
-
-    logger.info(f"模型已加载: {_predictor.best_model_name} "
-                f"(ROC-AUC={_predictor.metrics[_predictor.best_model_name]['roc_auc']:.4f})")
-
-    return _predictor
-
-
-def _compute_risk_level(probability: float) -> str:
-    """根据流失概率确定风险等级"""
-    if probability < 0.3:
-        return "low"
-    elif probability < 0.6:
-        return "medium"
-    elif probability < 0.8:
-        return "high"
-    else:
-        return "critical"
-
-
 # ── API 端点 ────────────────────────────────────────────────
 
 
@@ -172,40 +139,32 @@ async def predict(features: CustomerFeatures):
     接受客户特征 JSON，返回流失概率和风险等级。
     """
     try:
-        predictor = _load_predictor()
+        predictor, feature_names = get_predictor()
     except FileNotFoundError as e:
         raise HTTPException(status_code=503, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"模型加载失败: {str(e)}")
 
     # 构建 DataFrame
-    input_dict = features.model_dump()
+    input_dict = features.dict()
     df = pd.DataFrame([input_dict])
-
-    # 确保列顺序与训练时一致
-    if _feature_names:
-        missing = set(_feature_names) - set(df.columns)
-        if missing:
-            raise HTTPException(
-                status_code=422,
-                detail=f"缺少特征列: {missing}",
-            )
-        # 添加缺失的 one-hot 列（若可能）
-        for col in _feature_names:
-            if col not in df.columns:
-                df[col] = 0
-        df = df[_feature_names]
 
     # 预处理 + 预测
     try:
         if predictor._preprocessor is not None:
             X = predictor._preprocessor.transform(df)
         else:
+            # 无预处理器时，确保列顺序与训练时一致
+            if feature_names:
+                for col in feature_names:
+                    if col not in df.columns:
+                        df[col] = 0
+                df = df[feature_names]
             X = df.values.astype(float)
 
         churn_prob = float(predictor.predict_proba(X)[0])
         predicted_class = int(predictor.predict(X)[0])
-        risk_level = _compute_risk_level(churn_prob)
+        risk_level = compute_risk_level(churn_prob)
 
         return PredictionResponse(
             churn_probability=round(churn_prob, 4),

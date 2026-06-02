@@ -14,10 +14,6 @@
 - 模型持久化与评估结果导出
 """
 
-import sys
-import os
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 import pandas as pd
 import numpy as np
 from typing import Dict, List, Tuple, Optional, Any
@@ -59,8 +55,8 @@ except ImportError:  # pragma: no cover
 import plotly.graph_objects as go
 import plotly.io as pio
 
-from config.settings import config
-from utils.performance import monitor_performance
+from src.config.settings import config
+from src.utils.performance import monitor_performance
 
 # 设置 Plotly 默认主题（与项目保持一致）
 pio.templates.default = "plotly_white"
@@ -273,7 +269,6 @@ class ChurnPredictor:
                 xgb.XGBClassifier(
                     random_state=self.random_state,
                     eval_metric="logloss",
-                    use_label_encoder=False,
                 ),
                 xgb_param_grid,
             )

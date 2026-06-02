@@ -2,10 +2,6 @@
 特征工程模块 - 高效的特征处理和编码
 """
 
-import sys
-import os
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 import pandas as pd
 import numpy as np
 from typing import Dict, List, Tuple, Optional, Any
@@ -14,8 +10,8 @@ from sklearn.cluster import MeanShift
 import logging
 from functools import lru_cache
 import time
-from config.settings import config
-from utils.performance import monitor_performance, monitor_performance_simple
+from src.config.settings import config
+from src.utils.performance import monitor_performance, monitor_performance_simple
 
 logger = logging.getLogger(__name__)
 

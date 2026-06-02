@@ -2,19 +2,16 @@
 数据加载模块 - 支持高效数据加载和缓存
 """
 
-import sys
-import os
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 import pandas as pd
 import numpy as np
+import os
 from typing import Tuple, Optional, Dict, Any
 import logging
 from functools import lru_cache
 import psutil
 import time
-from config.settings import config
-from utils.performance import monitor_performance
+from src.config.settings import config
+from src.utils.performance import monitor_performance
 
 # 配置日志
 logging.basicConfig(level=logging.INFO)

@@ -7,10 +7,6 @@
 - SHAP 摘要图、特征重要性图、依赖图
 """
 
-import sys
-import os
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -25,7 +21,7 @@ try:
 except ImportError:  # pragma: no cover
     SHAP_AVAILABLE = False
 
-from config.settings import config
+from src.config.settings import config
 
 # 中文字体设置
 plt.rcParams['font.sans-serif'] = ['WenQuanYi Micro Hei', 'SimHei', 'sans-serif']

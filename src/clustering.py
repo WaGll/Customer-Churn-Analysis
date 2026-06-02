@@ -2,10 +2,6 @@
 聚类分析模块 - 优化的聚类算法实现
 """
 
-import sys
-import os
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 import pandas as pd
 import numpy as np
 from typing import Dict, List, Tuple, Optional, Any
@@ -18,9 +14,9 @@ import logging
 import time
 import matplotlib.pyplot as plt
 import seaborn as sns
-from config.settings import config
+from src.config.settings import config
 import psutil
-from utils.performance import monitor_performance
+from src.utils.performance import monitor_performance
 
 logger = logging.getLogger(__name__)
 

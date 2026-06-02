@@ -16,8 +16,8 @@ from tqdm import tqdm
 from tqdm.contrib.logging import logging_redirect_tqdm
 
 
-# 添加src目录到Python路径
-sys.path.append(os.path.join(os.path.dirname(__file__), 'src'))
+# 添加项目根目录到 Python 路径（确保 src.xxx 导入正常）
+sys.path.insert(0, os.path.dirname(__file__))
 
 # 导入模块
 from src.data_loader import DataLoader, monitor_performance
@@ -211,16 +211,27 @@ def main():
             logger.info(f"其中流失相关规则 {len(loss_rules)} 条")
             logger.info(f"耗时: {time.time() - start_time:.2f}秒")
 
-            # 保存关联规则结果
-            rule_result['loss_rules'] = loss_rules
-            rule_result['report'] = rule_report
-
-            
+            # 保存关联规则结果（DataFrame 显式转 CSV 字符串，避免 str(df) 截断）
+            rule_json = {
+                'algorithm': rule_result['algorithm'],
+                'min_support': rule_result['min_support'],
+                'min_confidence': rule_result['min_confidence'],
+                'frequent_itemsets': rule_result['frequent_itemsets'].to_csv(index=False)
+                    if hasattr(rule_result['frequent_itemsets'], 'to_csv')
+                    else str(rule_result['frequent_itemsets']),
+                'rules': rule_result['rules'].to_csv(index=False)
+                    if hasattr(rule_result['rules'], 'to_csv')
+                    else str(rule_result['rules']),
+                'rule_count': rule_result['rule_count'],
+                'itemset_count': rule_result['itemset_count'],
+                'loss_rules': loss_rules,
+                'report': rule_report,
+            }
 
             rules_path = os.path.join(results_dir, 'association_rules.json')
 
             with open(rules_path, 'w', encoding='utf-8') as f:
-                json.dump(rule_result, f, ensure_ascii=False, indent=2, default=str)
+                json.dump(rule_json, f, ensure_ascii=False, indent=2, default=str)
 
             pbar.update(1)
 
@@ -334,7 +345,7 @@ def main():
 
                 # 使用 One-Hot 编码数据（已包含数值特征和目标列）
                 prediction_summary = predictor.run(
-                    df=datasets['one_hot'],
+                    df=df,
                     target_col='用户流失标签',
                     test_size=0.2,
                     cv_folds=5,
